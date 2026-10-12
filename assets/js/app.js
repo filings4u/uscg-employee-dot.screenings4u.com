@@ -506,7 +506,7 @@ async function init(){
     const s=await getSession();if(!s){location.replace('https://portal.screenings4u.com/');return}
     const startingMid=stored(),startingCache=readBrandCache(startingMid);if(startingCache?.branding)primeBranding(startingCache.branding);
     const prefetchedBrand=startingMid?fetchBranding().catch(e=>{console.warn('Branding prefetch unavailable',e);return null}):null;
-    const ctx=await access();if(ctx.requires_workspace_selection){location.replace('/workspace.html');return}if(!ctx.has_access)throw new Error(ctx.reason||'Portal access denied.');if(ctx.portal_code!==C.portalCode||ctx.surface!=='dot'||!ctx.employee?.id)throw new Error('This account is not authorized for this DOT management portal.');
+    const ctx=await access();if(ctx.requires_workspace_selection){location.replace('/workspace.html');return}if(!ctx.has_access)throw new Error(ctx.reason||'Portal access denied.');if(ctx.portal_code!==C.portalCode||ctx.surface!=='dot'||!ctx.employee?.id)throw new Error('USCG employee authorization mismatch: '+JSON.stringify({expected:C.portalCode,actual:ctx.portal_code,surface:ctx.surface,employee:!!ctx.employee?.id}));
     saveMid(ctx.employee?.id);window.portalCtx=ctx;
     const cache=readBrandCache(ctx.employee?.id);if(cache?.branding)primeBranding(cache.branding);
     shell(ctx);
